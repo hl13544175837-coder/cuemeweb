@@ -238,12 +238,22 @@
       width: 54px;
       height: 54px;
       border-radius: 12px;
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: #fff;
       font-weight: 800;
       font-size: 20px;
       background: linear-gradient(135deg, #4a79ff, #7f4dff);
+      overflow: hidden;
+      border: 1px solid #d7deed;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .meta h4 {
@@ -489,12 +499,12 @@
 
   <script>
     const roles = [
-      { name: "CueMe", desc: "介绍一下人类20年半吊子数据分析和科研写作", ctr: "CTR 24.69%", mark: "C" },
-      { name: "超强写手程章", desc: "写作框架搭建、论文改写、长文扩写", ctr: "CTR 19.69%", mark: "程" },
-      { name: "学习讲题助手", desc: "题目有不懂，随时来问我", ctr: "CTR 16.60%", mark: "学" },
-      { name: "健康问答助手", desc: "健康问题24小时在线解答", ctr: "CTR 15.76%", mark: "健" },
-      { name: "灵魂画师小索", desc: "画一个奥特曼和怪兽一起在立冬吃饺子", ctr: "CTR 15.57%", mark: "索" },
-      { name: "爱聊天的琉璃", desc: "今天想聊点什么？", ctr: "CTR 15.01%", mark: "琉" }
+      { name: "CueMe", desc: "介绍一下人类20年半吊子数据分析和科研写作", ctr: "CTR 24.69%", mark: "C", img: "assets/avatars/cueme-hero.png" },
+      { name: "超强写手程章", desc: "写作框架搭建、论文改写、长文扩写", ctr: "CTR 19.69%", mark: "程", img: "assets/avatars/chengzhang.png" },
+      { name: "学习讲题助手", desc: "题目有不懂，随时来问我", ctr: "CTR 16.60%", mark: "学", img: "assets/avatars/xuexi.png" },
+      { name: "健康问答助手", desc: "健康问题24小时在线解答", ctr: "CTR 15.76%", mark: "健", img: "assets/avatars/jiankang.png" },
+      { name: "灵魂画师小索", desc: "画一个奥特曼和怪兽一起在立冬吃饺子", ctr: "CTR 15.57%", mark: "索", img: "assets/avatars/xiaosuo.png" },
+      { name: "爱聊天的琉璃", desc: "今天想聊点什么？", ctr: "CTR 15.01%", mark: "琉", img: "assets/avatars/liuli.png" }
     ];
 
     const roleList = document.getElementById("roleList");
@@ -537,7 +547,7 @@
       currentRole = role;
       chatName.textContent = role.name;
       chatDesc.textContent = role.desc;
-      chatAvatar.textContent = role.mark;
+      chatAvatar.innerHTML = role.img ? `<img src="${role.img}" alt="${role.name} 头像">` : role.mark;
       switchTab("chat");
       addMsg("agent", `我是 ${role.name}。告诉我你的目标，我会给你一版可执行方案。`);
     }
@@ -547,8 +557,9 @@
       roles.forEach((role) => {
         const item = document.createElement("article");
         item.className = "item";
+        const avatarHTML = role.img ? `<img src="${role.img}" alt="${role.name} 头像">` : role.mark;
         item.innerHTML = `
-          <div class="avatar">${role.mark}</div>
+          <div class="avatar">${avatarHTML}</div>
           <div class="meta">
             <h4>${role.name}</h4>
             <p>${role.desc}</p>
@@ -591,6 +602,8 @@
     input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(input.value); });
 
     renderRoles();
+    selectRole(roles[0]);
+    switchTab("list");
   </script>
 </body>
 </html>
