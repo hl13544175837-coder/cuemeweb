@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CueMe 运营复盘 - 新版</title>
+  <style>
+    :root {
+      --bg: #f2f4f8;
+      --panel: #ffffff;
+      --line: #dde3ed;
+      --text: #171b27;
+      --muted: #677084;
+      --brand: #2a60f2;
+      --brand-2: #4f7eff;
+      --ok: #169b61;
+      --warn: #f28d2a;
+    }
+
+    * {
+      box-sizing: border-box;
+      letter-spacing: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 0% 0%, #f9fbff 0%, transparent 28%),
+        radial-gradient(circle at 100% 0%, #e9efff 0%, transparent 25%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      width: min(1180px, calc(100vw - 28px));
+      margin: 18px auto 34px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+      padding: 18px;
+      box-shadow: 0 16px 46px rgba(35, 56, 103, 0.1);
+    }
+
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      margin: 0;
+      font-size: clamp(27px, 4.4vw, 44px);
+      line-height: 1.06;
+      font-weight: 800;
+    }
+
+    .sub {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.55;
+      max-width: 820px;
+    }
+
+    .stamp {
+      border: 1px solid var(--line);
+      background: #f8faff;
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #4d5a74;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .hero-image {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .hero-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      padding: 14px;
+      box-shadow: 0 10px 28px rgba(33, 57, 108, 0.07);
+    }
+
+    .kpi span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 7px;
+      font-weight: 700;
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1.1;
+      font-weight: 800;
+    }
+
+    .kpi em {
+      margin-top: 5px;
+      display: block;
+      font-style: normal;
+      font-size: 13px;
+      color: #4d5a74;
+      font-weight: 600;
+    }
+
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 12px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      padding: 14px;
+      box-shadow: 0 10px 28px rgba(33, 57, 108, 0.07);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      color: #2a3346;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .kr {
+      display: grid;
+      gap: 8px;
+    }
+
+    .kr-item {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fafcff;
+      padding: 10px 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #263147;
+    }
+
+    .kr-item strong {
+      color: #111827;
+    }
+
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .phase {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .phase .tag {
+      display: inline-block;
+      border-radius: 8px;
+      background: linear-gradient(120deg, var(--brand), var(--brand-2));
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 8px;
+      margin-bottom: 8px;
+    }
+
+    .phase h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .phase p {
+      margin: 0;
+      color: #2a3346;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .phase ul {
+      margin: 8px 0 0;
+      padding-left: 16px;
+      color: #4a556a;
+      font-size: 13px;
+      line-height: 1.45;
+      display: grid;
+      gap: 4px;
+    }
+
+    .footer {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(135deg, #1f59e5, #367eff);
+      color: #fff;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer strong {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .footer p {
+      margin: 2px 0 0;
+      font-size: 14px;
+      opacity: 0.92;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      background: #fff;
+      color: #1e4eb4;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 9px 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 980px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+      .phase-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: calc(100vw - 14px);
+        margin-top: 8px;
+      }
+      .hero,
+      .card,
+      .kpi,
+      .footer {
+        border-radius: 12px;
+        padding: 12px;
+      }
+      .title {
+        font-size: 31px;
+      }
+      .kpi strong {
+        font-size: 24px;
+      }
+      .phase-grid,
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer strong {
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="head">
+        <div>
+          <h1 class="title">CueMe 列表页与小伙伴广场<br>运营复盘（新版）</h1>
+          <p class="sub">基于你提供的 CueMe 旧版资料和数据口径，聚焦“曝光到点击到对话”的漏斗优化、角色生态治理与阶段性迭代节奏。</p>
+        </div>
+        <div class="stamp">更新：2026-04-24</div>
+      </div>
+      <figure class="hero-image">
+        <img src="assets/cueme-kpi-reference.png" alt="CueMe 列表页与详情页核心指标对照图" />
+      </figure>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="kpi">
+        <span>Tips 曝光量</span>
+        <strong>296,083.57</strong>
+        <em>PV（环比 +1w）</em>
+      </article>
+      <article class="kpi">
+        <span>Tips 点击量</span>
+        <strong>1,821.14</strong>
+        <em>PV</em>
+      </article>
+      <article class="kpi">
+        <span>Tips 点击率</span>
+        <strong>0.62%</strong>
+        <em class="warn">环比 -0.02%</em>
+      </article>
+      <article class="kpi">
+        <span>推荐角色点击率</span>
+        <strong>15.71%</strong>
+        <em>对话转化 28.20%</em>
+      </article>
+    </section>
+
+    <section class="two-col">
+      <article class="card">
+        <h2>问题定位</h2>
+        <ol class="list">
+          <li>入口层：按钮展现到广场页面转化仅 1.44%，高比例流失发生在第一跳。</li>
+          <li>分发层：固定推荐位导致头部角色曝光占比过高（约 50%），长尾角色缺乏验证机会。</li>
+          <li>互动层：点击后未能快速进入对话，首语吸引力与快捷回复引导不足。</li>
+          <li>生态层：UGC 角色点击率偏低，缺少统一的人设质量评分和流量扶持机制。</li>
+        </ol>
+      </article>
+
+      <article class="card">
+        <h2>目标与 KR</h2>
+        <div class="kr">
+          <div class="kr-item"><strong>KR1：</strong>入口转化率从 1.44% 提升至 2.0%+。</div>
+          <div class="kr-item"><strong>KR2：</strong>点击到对话转化率从 40.06% 提升至 45%+。</div>
+          <div class="kr-item"><strong>KR3：</strong>用户创建 IP 点击率从 14.4% 提升至 16%+。</div>
+          <div class="kr-item"><strong>KR4：</strong>头部角色曝光占比压到 30% 以内，整体生态更健康。</div>
+          <div class="kr-item"><strong>KR5：</strong>人均对话轮数维持在 15 轮以上，广场维持 70 轮级深度互动。</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>四阶段规划（PRD）</h2>
+      <div class="phase-grid">
+        <article class="phase">
+          <span class="tag">阶段一</span>
+          <h3>流量分发重构</h3>
+          <p>动态轮播池 + 赛马机制，解除固定推荐限制。</p>
+          <ul>
+            <li>角色池从 2 扩到 8-10</li>
+            <li>新角色冷启动保障 500PV/天</li>
+            <li>低 CTR 熔断降权</li>
+          </ul>
+        </article>
+        <article class="phase">
+          <span class="tag">阶段二</span>
+          <h3>对话破冰提效</h3>
+          <p>优化首语与输入引导，降低第一句发送门槛。</p>
+          <ul>
+            <li>诱导式首语模板</li>
+            <li>快捷回复气泡</li>
+            <li>停留引导浮层</li>
+          </ul>
+        </article>
+        <article class="phase">
+          <span class="tag">阶段三</span>
+          <h3>UGC 生态治理</h3>
+          <p>创作者体检与优质内容分级，建立创作闭环。</p>
+          <ul>
+            <li>头像/首语/人设评分</li>
+            <li>评分达标后进推荐池</li>
+            <li>官方角色带动优质 UGC</li>
+          </ul>
+        </article>
+        <article class="phase">
+          <span class="tag">阶段四</span>
+          <h3>长效留存增强</h3>
+          <p>引入记忆与剧情反馈机制，强化深度互动。</p>
+          <ul>
+            <li>跨天记忆回溯</li>
+            <li>亲密度进度反馈</li>
+            <li>多模态剧情生图（LoRA）</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="footer">
+      <div>
+        <strong>新版 CueMe 复盘页已替换旧版</strong>
+        <p>你当前看到的页面即为“指标复盘 + 迭代规划”版本，适合面试展示产品思路与增长方法。</p>
+      </div>
+      <a class="btn" href="https://github.com/hl13544175837-coder/cuemeweb" target="_blank" rel="noopener noreferrer">查看仓库</a>
+    </section>
+  </main>
+</body>
+</html>
