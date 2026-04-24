@@ -3,425 +3,594 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CueMe 运营复盘 - 新版</title>
+  <title>CueMe MVP</title>
   <style>
     :root {
-      --bg: #f2f4f8;
-      --panel: #ffffff;
-      --line: #dde3ed;
-      --text: #171b27;
-      --muted: #677084;
-      --brand: #2a60f2;
-      --brand-2: #4f7eff;
-      --ok: #169b61;
-      --warn: #f28d2a;
+      --bg: #f2f5fb;
+      --card: #ffffff;
+      --line: #dfe5f0;
+      --text: #121826;
+      --muted: #667085;
+      --brand: #2861f2;
+      --brand2: #5f86ff;
+      --ok: #0f9b62;
     }
 
-    * {
-      box-sizing: border-box;
-      letter-spacing: 0;
-    }
+    * { box-sizing: border-box; letter-spacing: 0; }
 
     body {
       margin: 0;
       font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       background:
         radial-gradient(circle at 0% 0%, #f9fbff 0%, transparent 28%),
-        radial-gradient(circle at 100% 0%, #e9efff 0%, transparent 25%),
+        radial-gradient(circle at 100% 0%, #eaf0ff 0%, transparent 32%),
         var(--bg);
       color: var(--text);
-    }
-
-    .page {
-      width: min(1180px, calc(100vw - 28px));
-      margin: 18px auto 34px;
+      min-height: 100vh;
       display: grid;
-      gap: 14px;
+      place-items: center;
+      padding: 14px;
     }
 
-    .hero {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--panel);
-      padding: 18px;
-      box-shadow: 0 16px 46px rgba(35, 56, 103, 0.1);
+    .phone {
+      width: min(430px, 100%);
+      height: min(905px, 96vh);
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid #d5ddeb;
+      background: #f4f6fa;
+      box-shadow: 0 22px 60px rgba(26, 40, 77, 0.22);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
     }
 
-    .head {
+    .status {
+      padding: 11px 14px 2px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-
-    .title {
-      margin: 0;
-      font-size: clamp(27px, 4.4vw, 44px);
-      line-height: 1.06;
-      font-weight: 800;
-    }
-
-    .sub {
-      margin: 7px 0 0;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.55;
-      max-width: 820px;
-    }
-
-    .stamp {
-      border: 1px solid var(--line);
-      background: #f8faff;
-      border-radius: 12px;
-      padding: 8px 12px;
-      font-size: 13px;
-      color: #4d5a74;
+      align-items: center;
+      font-size: 14px;
       font-weight: 700;
+    }
+
+    .top {
+      padding: 5px 12px 12px;
+      border-bottom: 1px solid #e6ebf3;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+
+    .logo {
+      margin: 0;
+      color: var(--brand);
+      font-size: 35px;
+      font-style: italic;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .top button {
+      border: 0;
+      background: transparent;
+      color: #30374a;
+      font-size: 30px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 6px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #f4f6fa;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fff;
+      padding: 9px 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #445067;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      border-color: transparent;
+      background: linear-gradient(120deg, var(--brand), var(--brand2));
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(40, 97, 242, 0.28);
+    }
+
+    .view {
+      display: none;
+      overflow: auto;
+      padding: 0 12px 14px;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .notice {
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .notice strong {
+      background: linear-gradient(120deg, var(--brand), var(--brand2));
+      color: #fff;
+      border-radius: 7px;
+      padding: 4px 7px;
+      font-size: 11px;
       white-space: nowrap;
     }
 
-    .hero-image {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      overflow: hidden;
-      background: #fff;
+    .notice span {
+      font-size: 14px;
+      color: #2a3346;
     }
 
-    .hero-image img {
+    .tips {
+      margin-top: 10px;
+      border-radius: 13px;
+      padding: 12px;
+      color: #fff;
+      background: linear-gradient(130deg, #255cea, #6d43ff);
+      box-shadow: 0 12px 28px rgba(45, 78, 237, 0.34);
+      cursor: pointer;
+    }
+
+    .tips h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tips p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .tips small {
       display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
+      opacity: 0.92;
+      margin-top: 7px;
+      font-size: 12px;
     }
 
     .kpi {
+      margin-top: 10px;
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: var(--panel);
-      padding: 14px;
-      box-shadow: 0 10px 28px rgba(33, 57, 108, 0.07);
+      border-radius: 12px;
+      background: #fff;
+      padding: 11px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .kpi div {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 8px;
+      text-align: center;
     }
 
     .kpi span {
       display: block;
-      font-size: 12px;
       color: var(--muted);
-      margin-bottom: 7px;
-      font-weight: 700;
+      font-size: 11px;
+      margin-bottom: 4px;
     }
 
     .kpi strong {
       display: block;
-      font-size: 28px;
+      font-size: 17px;
       line-height: 1.1;
-      font-weight: 800;
     }
 
     .kpi em {
-      margin-top: 5px;
       display: block;
+      margin-top: 4px;
+      font-size: 11px;
       font-style: normal;
-      font-size: 13px;
-      color: #4d5a74;
-      font-weight: 600;
-    }
-
-    .ok { color: var(--ok); }
-    .warn { color: var(--warn); }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 12px;
-    }
-
-    .card {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: var(--panel);
-      padding: 14px;
-      box-shadow: 0 10px 28px rgba(33, 57, 108, 0.07);
-    }
-
-    .card h2 {
-      margin: 0 0 10px;
-      font-size: 20px;
-      font-weight: 800;
+      color: var(--ok);
     }
 
     .list {
-      margin: 0;
-      padding-left: 18px;
+      margin-top: 11px;
       display: grid;
-      gap: 8px;
-      color: #2a3346;
-      font-size: 15px;
-      line-height: 1.55;
+      gap: 9px;
+      padding-bottom: 78px;
     }
 
-    .kr {
-      display: grid;
-      gap: 8px;
-    }
-
-    .kr-item {
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: #fafcff;
-      padding: 10px 12px;
-      font-size: 14px;
-      line-height: 1.5;
-      color: #263147;
-    }
-
-    .kr-item strong {
-      color: #111827;
-    }
-
-    .phase-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .phase {
+    .item {
       border: 1px solid var(--line);
       border-radius: 12px;
       background: #fff;
-      padding: 12px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 54px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.18s ease;
     }
 
-    .phase .tag {
-      display: inline-block;
-      border-radius: 8px;
-      background: linear-gradient(120deg, var(--brand), var(--brand-2));
+    .item:hover { transform: translateY(-1px); }
+
+    .avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
       color: #fff;
+      font-weight: 800;
+      font-size: 20px;
+      background: linear-gradient(135deg, #4a79ff, #7f4dff);
+    }
+
+    .meta h4 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .meta p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .ctr {
       font-size: 12px;
       font-weight: 700;
+      color: #1f5be8;
+      border: 1px solid #cfe0ff;
+      background: #edf3ff;
+      border-radius: 999px;
       padding: 4px 8px;
-      margin-bottom: 8px;
-    }
-
-    .phase h3 {
-      margin: 0 0 6px;
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    .phase p {
-      margin: 0;
-      color: #2a3346;
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    .phase ul {
-      margin: 8px 0 0;
-      padding-left: 16px;
-      color: #4a556a;
-      font-size: 13px;
-      line-height: 1.45;
-      display: grid;
-      gap: 4px;
-    }
-
-    .footer {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: linear-gradient(135deg, #1f59e5, #367eff);
-      color: #fff;
-      padding: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .footer strong {
-      font-size: 22px;
-      font-weight: 800;
-    }
-
-    .footer p {
-      margin: 2px 0 0;
-      font-size: 14px;
-      opacity: 0.92;
-    }
-
-    .btn {
-      border: 0;
-      border-radius: 10px;
-      background: #fff;
-      color: #1e4eb4;
-      font-size: 14px;
-      font-weight: 800;
-      padding: 9px 13px;
-      text-decoration: none;
       white-space: nowrap;
     }
 
-    @media (max-width: 980px) {
-      .kpi-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .two-col {
-        grid-template-columns: 1fr;
-      }
-      .phase-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+    .chat-header {
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 64px 1fr auto;
+      align-items: center;
+      gap: 10px;
     }
 
-    @media (max-width: 640px) {
-      .page {
-        width: calc(100vw - 14px);
-        margin-top: 8px;
-      }
-      .hero,
-      .card,
-      .kpi,
-      .footer {
-        border-radius: 12px;
-        padding: 12px;
-      }
-      .title {
-        font-size: 31px;
-      }
-      .kpi strong {
-        font-size: 24px;
-      }
-      .phase-grid,
-      .kpi-grid {
-        grid-template-columns: 1fr;
-      }
-      .footer strong {
-        font-size: 19px;
-      }
+    .chat-header .avatar {
+      width: 64px;
+      height: 64px;
+      font-size: 24px;
+    }
+
+    .chat-header h3 {
+      margin: 0 0 5px;
+      font-size: 19px;
+    }
+
+    .chat-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .start-btn {
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(120deg, var(--brand), var(--brand2));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 10px;
+      cursor: pointer;
+    }
+
+    .quick {
+      margin-top: 10px;
+      display: flex;
+      gap: 7px;
+      overflow: auto;
+      padding-bottom: 4px;
+    }
+
+    .quick button {
+      border: 1px solid #cfe0ff;
+      background: #edf3ff;
+      color: #29508f;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 10px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .log {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      padding: 10px;
+      min-height: 300px;
+      max-height: 420px;
+      overflow: auto;
+      display: grid;
+      gap: 8px;
+    }
+
+    .msg {
+      max-width: 85%;
+      border-radius: 12px;
+      padding: 9px 10px;
+      font-size: 14px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .msg.agent {
+      border: 1px solid #dee4f0;
+      background: #fff;
+      color: #263047;
+    }
+
+    .msg.user {
+      margin-left: auto;
+      border: 1px solid #b9d2ff;
+      background: #dce9ff;
+      color: #14335f;
+    }
+
+    .composer {
+      border-top: 1px solid #e5eaf2;
+      background: #f5f7fb;
+      padding: 10px 12px;
+    }
+
+    .compose {
+      border: 1px solid #d7deeb;
+      border-radius: 15px;
+      background: #fff;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 6px 6px 6px 10px;
+    }
+
+    .compose input {
+      border: 0;
+      outline: none;
+      font-size: 16px;
+      min-width: 0;
+    }
+
+    .send {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 11px;
+      color: #fff;
+      background: linear-gradient(120deg, var(--brand), var(--brand2));
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    @media (max-width: 430px) {
+      body { padding: 0; }
+      .phone { width: 100vw; height: 100vh; border-radius: 0; border: 0; }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <section class="hero">
-      <div class="head">
+  <main class="phone">
+    <div class="status">
+      <div id="clock">15:42</div>
+      <div>5G · 100%</div>
+    </div>
+
+    <header class="top">
+      <h1 class="logo">CueMe</h1>
+      <button aria-label="关闭">×</button>
+    </header>
+
+    <section class="tabs">
+      <button class="tab active" data-tab="list">角色列表</button>
+      <button class="tab" data-tab="chat">角色对话</button>
+    </section>
+
+    <section class="view active" id="listView">
+      <div class="notice">
+        <strong>公告</strong>
+        <span>CueMe MVP：支持列表推荐、Tips、快捷对话与基础记忆。</span>
+      </div>
+
+      <article class="tips" id="tipsCard">
+        <h3>NEW 热点速览</h3>
+        <p>量子芯片 Willow 发布，点击查看 3 条外露热点与详情解读。</p>
+        <small>按钮意图：了解详情（提高 Tips 命中率）</small>
+      </article>
+
+      <section class="kpi">
         <div>
-          <h1 class="title">CueMe 列表页与小伙伴广场<br>运营复盘（新版）</h1>
-          <p class="sub">基于你提供的 CueMe 旧版资料和数据口径，聚焦“曝光到点击到对话”的漏斗优化、角色生态治理与阶段性迭代节奏。</p>
+          <span>曝光量</span>
+          <strong>296,083</strong>
+          <em>环比 +1w</em>
         </div>
-        <div class="stamp">更新：2026-04-24</div>
-      </div>
-      <figure class="hero-image">
-        <img src="assets/cueme-kpi-reference.png" alt="CueMe 列表页与详情页核心指标对照图" />
-      </figure>
-    </section>
-
-    <section class="kpi-grid">
-      <article class="kpi">
-        <span>Tips 曝光量</span>
-        <strong>296,083.57</strong>
-        <em>PV（环比 +1w）</em>
-      </article>
-      <article class="kpi">
-        <span>Tips 点击量</span>
-        <strong>1,821.14</strong>
-        <em>PV</em>
-      </article>
-      <article class="kpi">
-        <span>Tips 点击率</span>
-        <strong>0.62%</strong>
-        <em class="warn">环比 -0.02%</em>
-      </article>
-      <article class="kpi">
-        <span>推荐角色点击率</span>
-        <strong>15.71%</strong>
-        <em>对话转化 28.20%</em>
-      </article>
-    </section>
-
-    <section class="two-col">
-      <article class="card">
-        <h2>问题定位</h2>
-        <ol class="list">
-          <li>入口层：按钮展现到广场页面转化仅 1.44%，高比例流失发生在第一跳。</li>
-          <li>分发层：固定推荐位导致头部角色曝光占比过高（约 50%），长尾角色缺乏验证机会。</li>
-          <li>互动层：点击后未能快速进入对话，首语吸引力与快捷回复引导不足。</li>
-          <li>生态层：UGC 角色点击率偏低，缺少统一的人设质量评分和流量扶持机制。</li>
-        </ol>
-      </article>
-
-      <article class="card">
-        <h2>目标与 KR</h2>
-        <div class="kr">
-          <div class="kr-item"><strong>KR1：</strong>入口转化率从 1.44% 提升至 2.0%+。</div>
-          <div class="kr-item"><strong>KR2：</strong>点击到对话转化率从 40.06% 提升至 45%+。</div>
-          <div class="kr-item"><strong>KR3：</strong>用户创建 IP 点击率从 14.4% 提升至 16%+。</div>
-          <div class="kr-item"><strong>KR4：</strong>头部角色曝光占比压到 30% 以内，整体生态更健康。</div>
-          <div class="kr-item"><strong>KR5：</strong>人均对话轮数维持在 15 轮以上，广场维持 70 轮级深度互动。</div>
+        <div>
+          <span>点击量</span>
+          <strong>1,821</strong>
+          <em>CTR 0.62%</em>
         </div>
-      </article>
+        <div>
+          <span>对话转化</span>
+          <strong>40.06%</strong>
+          <em>目标 45%+</em>
+        </div>
+      </section>
+
+      <section class="list" id="roleList"></section>
     </section>
 
-    <section class="card">
-      <h2>四阶段规划（PRD）</h2>
-      <div class="phase-grid">
-        <article class="phase">
-          <span class="tag">阶段一</span>
-          <h3>流量分发重构</h3>
-          <p>动态轮播池 + 赛马机制，解除固定推荐限制。</p>
-          <ul>
-            <li>角色池从 2 扩到 8-10</li>
-            <li>新角色冷启动保障 500PV/天</li>
-            <li>低 CTR 熔断降权</li>
-          </ul>
-        </article>
-        <article class="phase">
-          <span class="tag">阶段二</span>
-          <h3>对话破冰提效</h3>
-          <p>优化首语与输入引导，降低第一句发送门槛。</p>
-          <ul>
-            <li>诱导式首语模板</li>
-            <li>快捷回复气泡</li>
-            <li>停留引导浮层</li>
-          </ul>
-        </article>
-        <article class="phase">
-          <span class="tag">阶段三</span>
-          <h3>UGC 生态治理</h3>
-          <p>创作者体检与优质内容分级，建立创作闭环。</p>
-          <ul>
-            <li>头像/首语/人设评分</li>
-            <li>评分达标后进推荐池</li>
-            <li>官方角色带动优质 UGC</li>
-          </ul>
-        </article>
-        <article class="phase">
-          <span class="tag">阶段四</span>
-          <h3>长效留存增强</h3>
-          <p>引入记忆与剧情反馈机制，强化深度互动。</p>
-          <ul>
-            <li>跨天记忆回溯</li>
-            <li>亲密度进度反馈</li>
-            <li>多模态剧情生图（LoRA）</li>
-          </ul>
-        </article>
+    <section class="view" id="chatView">
+      <section class="chat-header">
+        <div class="avatar" id="chatAvatar">C</div>
+        <div>
+          <h3 id="chatName">CueMe</h3>
+          <p id="chatDesc">学习工作生活，我都能帮你。</p>
+        </div>
+        <button class="start-btn" id="startChatBtn">开始对话</button>
+      </section>
+
+      <div class="quick">
+        <button data-quick="帮我做今天的学习计划">学习计划</button>
+        <button data-quick="给我一个10万字减肥计划框架">长文写作</button>
+        <button data-quick="我今天有点emo，陪我聊聊">情绪陪伴</button>
+        <button data-quick="给我3个剧情分支选项">剧情分支</button>
       </div>
+
+      <section class="log" id="chatLog">
+        <div class="msg agent">Hi，我是 CueMe。你可以先选一个角色，或者直接发需求，我会给你可执行输出。</div>
+        <div class="msg agent">当前 MVP 已支持：快捷回复、首语引导、简易记忆、长文框架生成。</div>
+      </section>
     </section>
 
-    <section class="footer">
-      <div>
-        <strong>新版 CueMe 复盘页已替换旧版</strong>
-        <p>你当前看到的页面即为“指标复盘 + 迭代规划”版本，适合面试展示产品思路与增长方法。</p>
+    <section class="composer">
+      <div class="compose">
+        <input id="input" type="text" placeholder="正在生成答案..." />
+        <button class="send" id="sendBtn">➤</button>
       </div>
-      <a class="btn" href="https://github.com/hl13544175837-coder/cuemeweb" target="_blank" rel="noopener noreferrer">查看仓库</a>
     </section>
   </main>
+
+  <script>
+    const roles = [
+      { name: "CueMe", desc: "介绍一下人类20年半吊子数据分析和科研写作", ctr: "CTR 24.69%", mark: "C" },
+      { name: "超强写手程章", desc: "写作框架搭建、论文改写、长文扩写", ctr: "CTR 19.69%", mark: "程" },
+      { name: "学习讲题助手", desc: "题目有不懂，随时来问我", ctr: "CTR 16.60%", mark: "学" },
+      { name: "健康问答助手", desc: "健康问题24小时在线解答", ctr: "CTR 15.76%", mark: "健" },
+      { name: "灵魂画师小索", desc: "画一个奥特曼和怪兽一起在立冬吃饺子", ctr: "CTR 15.57%", mark: "索" },
+      { name: "爱聊天的琉璃", desc: "今天想聊点什么？", ctr: "CTR 15.01%", mark: "琉" }
+    ];
+
+    const roleList = document.getElementById("roleList");
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+    const listView = document.getElementById("listView");
+    const chatView = document.getElementById("chatView");
+    const chatName = document.getElementById("chatName");
+    const chatDesc = document.getElementById("chatDesc");
+    const chatAvatar = document.getElementById("chatAvatar");
+    const chatLog = document.getElementById("chatLog");
+    const input = document.getElementById("input");
+    const sendBtn = document.getElementById("sendBtn");
+
+    let currentRole = roles[0];
+    let memory = "";
+
+    function pad(num) { return String(num).padStart(2, "0"); }
+    function tickClock() {
+      const now = new Date();
+      document.getElementById("clock").textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }
+    tickClock();
+    window.setInterval(tickClock, 15000);
+
+    function addMsg(type, text) {
+      const div = document.createElement("div");
+      div.className = `msg ${type}`;
+      div.textContent = text;
+      chatLog.appendChild(div);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function switchTab(name) {
+      tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === name));
+      listView.classList.toggle("active", name === "list");
+      chatView.classList.toggle("active", name === "chat");
+    }
+
+    function selectRole(role) {
+      currentRole = role;
+      chatName.textContent = role.name;
+      chatDesc.textContent = role.desc;
+      chatAvatar.textContent = role.mark;
+      switchTab("chat");
+      addMsg("agent", `我是 ${role.name}。告诉我你的目标，我会给你一版可执行方案。`);
+    }
+
+    function renderRoles() {
+      roleList.innerHTML = "";
+      roles.forEach((role) => {
+        const item = document.createElement("article");
+        item.className = "item";
+        item.innerHTML = `
+          <div class="avatar">${role.mark}</div>
+          <div class="meta">
+            <h4>${role.name}</h4>
+            <p>${role.desc}</p>
+          </div>
+          <div class="ctr">${role.ctr}</div>
+        `;
+        item.addEventListener("click", () => selectRole(role));
+        roleList.appendChild(item);
+      });
+    }
+
+    function buildReply(text) {
+      const t = text.toLowerCase();
+      if (t.includes("计划")) return "收到。先给你 3 步：目标拆解、时间分块、每日复盘。你要我直接给今天的详细日程表吗？";
+      if (t.includes("长文") || t.includes("10万")) return "可以。MVP 先给你“标题-大纲-章节扩写”流程，先确认题目和受众，我再输出第一章样稿。";
+      if (t.includes("emo") || t.includes("聊聊")) return "我在。先不用急着解决问题，你可以先告诉我今天最卡的一件事，我陪你拆开它。";
+      if (t.includes("剧情")) return "给你 3 个分支：A继续探索 / B询问细节 / C反向挑战。你选一个，我继续生成后续剧情。";
+      if (t.includes("你好")) return "你好呀，我记住你来了。接下来你更想聊学习、写作，还是生活决策？";
+      return `已收到：${text}。我会按 ${currentRole.name} 的风格继续回答，并尽量给你可直接执行的内容。`;
+    }
+
+    function send(text) {
+      const content = text.trim();
+      if (!content) return;
+      addMsg("user", content);
+      memory = content;
+      input.value = "";
+      sendBtn.disabled = true;
+      window.setTimeout(() => {
+        addMsg("agent", buildReply(content));
+        sendBtn.disabled = false;
+      }, 260);
+    }
+
+    tabs.forEach((tab) => tab.addEventListener("click", () => switchTab(tab.dataset.tab)));
+    document.querySelectorAll("[data-quick]").forEach((btn) => btn.addEventListener("click", () => send(btn.dataset.quick)));
+    document.getElementById("startChatBtn").addEventListener("click", () => addMsg("agent", `欢迎回来。上次你说的是：「${memory || "还没有历史输入"}」。我们从这里继续。`));
+    document.getElementById("tipsCard").addEventListener("click", () => addMsg("agent", "Tips 详情：本周科技互联网类点击率更高，建议优先外露 3 条强相关热点。"));
+    sendBtn.addEventListener("click", () => send(input.value));
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(input.value); });
+
+    renderRoles();
+  </script>
 </body>
 </html>
